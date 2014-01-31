@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>theandroidwhisperer</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../libs/bootstrap.min.css">
+    <script src="../libs/angular.min.js"></script>
+    <script src="../libs/angular-route.min.js"></script>
+    <script src="../libs/ui-bootstrap-tpls-0.10.0.min.js"></script>
+    <script src="../js/app.js"></script>
+
+    <script src="../js/controllers/logcat.js"></script>
+    <script src="../js/controllers/main.js"></script>
+
+    <script src="../js/services/logcat.js"></script>
+    <script src="../js/services/state.js"></script>
+
+    <script src="../js/directives/state.js"></script>
+</head>
+
+<body ng-app="AndroidWhispererApp" ng-controller="MainController">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <h4>the Android Whisperer</h4>
+        </div>
+
+        <div class="btn-group pull-right">
+            <label>Filter:
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                {{currentFilter}} <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li ng-repeat="filter in logfilters"><a href="#" ng-click="chooseFilter(filter)">{{filter}}</a></li>
+            </ul>
+            </label>
+        </div>
+    </nav>
+
+    <div class="container views" ng-view=""></div>
+    <nav class="navbar navbar-fixed-bottom">
+        {{status}}
+        <button class="btn btn-primary pull-right"
+                ng-click="startADBServer()"
+                state="offline">
+            start adb server
+        </button>
+    </nav>
+</body>
+</html>

@@ -1,0 +1,28 @@
+ul.logentries li {
+    list-style: none;
+    border-bottom-width: 1px;
+    border-bottom-color: #cacaca;
+    border-bottom-style: solid;
+}
+
+ul.logentries {
+    padding-left: 0px;
+    width: 100%;
+}
+
+.container.views {
+    width: 100%;
+}
+
+nav.navbar {
+    background-color: #3a3a3a;
+    border-top-style: solid;
+    border-top-color: #555555;
+    border-top-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #555555;
+    border-bottom-width: 1px;
+    border-radius: 0;
+    padding: 10px;
+    color: #cacaca;
+}
