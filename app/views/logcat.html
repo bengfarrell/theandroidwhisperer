@@ -1,19 +1,3 @@
-<nav class="navbar navbar-default" role="navigation">
-    <div class="navbar-header">
-        <a class="navbar-brand" href="#">{{status.device.id}}</a>
-        <span>{{status.message}}</span>
-    </div>
-
-    <div class="btn-group pull-right">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-            filter <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" role="menu">
-            <li ng-repeat="filter in logfilters">{{filter}}</li>
-        </ul>
-    </div>
-</nav>
-
 <ul class="logentries">
     <li ng-repeat="entry in logentries">{{entry.message}}
         <small class="pull-right">{{entry.timestamp}}</small>

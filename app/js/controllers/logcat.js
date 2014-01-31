@@ -2,9 +2,9 @@
 app.controller('LogCatController', function ($scope, logcat) {
 
     $scope.logentries = [];
-    $scope.logfilters = [logcat.JS_CONSOLE, "none"];
+    $scope.$parent.status = "Loading...";
 
-    logcat.listen(logcat.JS_CONSOLE, function(event) {
+    logcat.listen(function(event) {
         if (event.type == "log") {
             $scope.logentries.push(event);
 
@@ -14,7 +14,7 @@ app.controller('LogCatController', function ($scope, logcat) {
             }
             $scope.$apply();
         } else {
-            $scope.status = event;
+            $scope.$parent.status = event.message;
             $scope.$apply();
 
         }
