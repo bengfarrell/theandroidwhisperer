@@ -4,7 +4,7 @@ app.controller('MainController', function ($scope, state, logcat) {
 
     $scope.status = "";
     $scope.logfilters = ["none", logcat.JS_CONSOLE];
-    $scope.currentFilter = logcat.JS_CONSOLE;
+    $scope.currentFilter = "none";
 
     $scope.$watch('status', function() {
         switch ($scope.status) {
@@ -16,7 +16,8 @@ app.controller('MainController', function ($scope, state, logcat) {
 
     $scope.chooseFilter = function(filter) {
         $scope.currentFilter = filter;
-        logcat.logfilters = filter;
+        logcat.logFilters = filter;
+        logcat.refreshEntries();
     }
 
     /**

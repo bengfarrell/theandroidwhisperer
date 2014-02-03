@@ -2,11 +2,30 @@ app.service('logcat', function() {
     var self = this;
     var adb = require('adbkit');
     var Connection = require('adbkit/lib/adb/connection');
+
     self.JS_CONSOLE = "jsconsole";
+
+    /** current log filter */
     self.logFilters = "none";
 
+    /** num logcat entries */
     self.counter = 0;
 
+    /** limit to shown entries */
+    self.limit = 100;
+
+    /** raw/unfiltered logcat entries */
+    self.rawEntries = [];
+
+    /** entries */
+    self.entries = [];
+
+    /**
+     * logcat entry filter
+     * @param filters
+     * @param entry
+     * @returns {*}
+     */
     self.filter = function(filters, entry) {
         if (typeof filters === "string") {
             filters = [filters];
@@ -28,6 +47,12 @@ app.service('logcat', function() {
         return null;
     }
 
+    /**
+     * format logcat entry
+     * @param filter
+     * @param entry
+     * @returns {string}
+     */
     self.format = function(filter, entry) {
         switch (filter) {
             case self.JS_CONSOLE:
@@ -37,6 +62,10 @@ app.service('logcat', function() {
         }
     }
 
+    /**
+     * add a listener to dispatch logcat events
+     * @param callback
+     */
     self.listen = function(callback) {
         self._callback = callback;
         self._client = adb.createClient();
@@ -49,10 +78,18 @@ app.service('logcat', function() {
         });
     }
 
+    /**
+     * start the adb server
+     */
     self.startADBServer = function() {
         self._client.connection().startServer(self._openlogcat);
     }
 
+    /**
+     * open logcat
+     * @param id
+     * @private
+     */
     self._openlogcat = function(id) {
         self._client.openLogcat(id, function(err, logcat) {
             if (err) {
@@ -61,13 +98,38 @@ app.service('logcat', function() {
                  var reader = logcat;
                  reader.on('entry', function(entry) {
                      self.counter ++;
+                     self.rawEntries.push(entry);
                      var txt = self.filter(self.logFilters, entry.message);
                      if (txt) {
-                         self._callback.apply(this, [{type: "log", message: txt, count: self.counter,
-                        timestamp: new Date(entry.date).toLocaleTimeString()}]);
+                         self.entries.push( {message: txt, count: self.counter,
+                             timestamp: new Date(entry.date).toLocaleTimeString()});
+                         self._callback.apply(this, [{event: "log" }]);
+                     }
+
+                     if (self.entries.length > self.limit) {
+                         self.entries.splice(self.entries.length-self.limit, self.entries.length)
                      }
                  });
             }
         });
+    }
+
+    /**
+     * get entries based on current filter
+     * @param limit
+     * @returns {Array}
+     */
+    self.refreshEntries = function() {
+        var c = self.rawEntries.length -1;
+        self.entries = [];
+        while (self.entries.length < self.limit && c > 0) {
+            var txt = self.filter(self.logFilters, self.rawEntries[c].message);
+            if (txt) {
+                self.entries.push({type: "log", message: txt, count: self.counter,
+                    timestamp: new Date(self.rawEntries[c].date).toLocaleTimeString()} );
+            }
+            c--;
+        }
+        self._callback.apply(this, [{event: "log" }]);
     }
 });
